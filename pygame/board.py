@@ -5,6 +5,7 @@ Game logic.
 
 from config import WHITE, BLACK, EMPTY
 from copy import deepcopy
+import random
 
 
 class Board:
@@ -54,7 +55,7 @@ class Board:
             i = i - 1
             while (i >= 0 and self.board[i][column] == other):
                 i = i - 1
-            if (i >= 0 and self.board[i][column] == 0):
+            if (i >= 0 and self.board[i][column] <= 0):
                 places = places + [(i, column)]
 
         # northeast
@@ -66,7 +67,7 @@ class Board:
             while (i >= 0 and j < 8 and self.board[i][j] == other):
                 i = i - 1
                 j = j + 1
-            if (i >= 0 and j < 8 and self.board[i][j] == 0):
+            if (i >= 0 and j < 8 and self.board[i][j] <= 0):
                 places = places + [(i, j)]
 
         # east
@@ -75,7 +76,7 @@ class Board:
             j = j + 1
             while (j < 8 and self.board[row][j] == other):
                 j = j + 1
-            if (j < 8 and self.board[row][j] == 0):
+            if (j < 8 and self.board[row][j] <= 0):
                 places = places + [(row, j)]
 
         # southeast
@@ -87,7 +88,7 @@ class Board:
             while (i < 8 and j < 8 and self.board[i][j] == other):
                 i = i + 1
                 j = j + 1
-            if (i < 8 and j < 8 and self.board[i][j] == 0):
+            if (i < 8 and j < 8 and self.board[i][j] <= 0):
                 places = places + [(i, j)]
 
         # south
@@ -96,7 +97,7 @@ class Board:
             i = i + 1
             while (i < 8 and self.board[i][column] == other):
                 i = i + 1
-            if (i < 8 and self.board[i][column] == 0):
+            if (i < 8 and self.board[i][column] <= 0):
                 places = places + [(i, column)]
 
         # southwest
@@ -108,7 +109,7 @@ class Board:
             while (i < 8 and j >= 0 and self.board[i][j] == other):
                 i = i + 1
                 j = j - 1
-            if (i < 8 and j >= 0 and self.board[i][j] == 0):
+            if (i < 8 and j >= 0 and self.board[i][j] <= 0):
                 places = places + [(i, j)]
 
         # west
@@ -117,7 +118,7 @@ class Board:
             j = j - 1
             while (j >= 0 and self.board[row][j] == other):
                 j = j - 1
-            if (j >= 0 and self.board[row][j] == 0):
+            if (j >= 0 and self.board[row][j] <= 0):
                 places = places + [(row, j)]
 
         # northwest
@@ -129,7 +130,7 @@ class Board:
             while (i >= 0 and j >= 0 and self.board[i][j] == other):
                 i = i - 1
                 j = j - 1
-            if (i >= 0 and j >= 0 and self.board[i][j] == 0):
+            if (i >= 0 and j >= 0 and self.board[i][j] <= 0):
                 places = places + [(i, j)]
 
         return places
@@ -163,6 +164,13 @@ class Board:
         """ Determine if the move is correct and apply the changes in the game.
         """
         if move in self.valid_moves:
+            if self.board[move[0]][move[1]] == -1:
+                a = random.random()
+                if a >= 0.6:
+                    if color == WHITE:
+                        color = BLACK
+                    else:
+                        color = WHITE
             self.board[move[0]][move[1]] = color
             for i in range(1, 9):
                 self.flip(i, move, color)

@@ -3,7 +3,7 @@
 Human and Computer classes
 """
 
-from evaluator import Evaluator
+from evaluator import Evaluator1,Evaluator2,Evaluator3
 from config import WHITE, BLACK
 from minimax import Minimax
 from copy import deepcopy
@@ -43,13 +43,19 @@ class Human:
 
 class Computer(object):
 
-    def __init__(self, color, level,prune=3):
+    def __init__(self, color, level,type,type2,prune=4):
         self.depthLimit = prune
-        evaluator = Evaluator()
+        if type==1:
+            evaluator = Evaluator1()
+        elif type==2:
+            evaluator = Evaluator2()
+        else:
+            evaluator = Evaluator3()
         self.minimaxObj = Minimax(evaluator.score)
         self.color = color
         self.type = 0
         self.level = level
+        self.random = type2
 
     def get_current_board(self, board):
         self.current_board = board
@@ -59,7 +65,7 @@ class Computer(object):
             pass #TODO
         if self.level == 3:
             return self.minimaxObj.minimax(self.current_board, None, self.depthLimit, self.color,
-                                       change_color(self.color))
+                                       change_color(self.color),self.random)
         if self.level == 2:
             max = 0
             maxindex = 0

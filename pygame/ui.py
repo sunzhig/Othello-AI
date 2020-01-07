@@ -6,7 +6,7 @@ import pygame
 import sys
 from pygame.locals import *
 import time
-from config import BLACK, WHITE, DEFAULT_LEVEL, HUMAN, COMPUTER
+from config import BLACK, WHITE, DEFAULT_LEVEL, HUMAN, COMPUTER, DEFAULT_MODE
 import os
 
 
@@ -17,6 +17,7 @@ class Gui:
         pygame.init()
         self.bremain = []
         self.wremain = []
+        self.random = []
 
         # colors
         self.BLACK = (0, 0, 0)
@@ -60,6 +61,7 @@ class Gui:
         player1 = HUMAN
         player2 = COMPUTER
         level = DEFAULT_LEVEL
+        mode = DEFAULT_MODE
 
         while True:
             self.screen.fill(self.BACKGROUND)
@@ -74,13 +76,16 @@ class Gui:
                 centerx=self.screen.get_width() / 2, centery=220)
             player1_txt = self.font.render("First Player", True, self.WHITE)
             player1_pos = player1_txt.get_rect(
-                centerx=self.screen.get_width() / 2, centery=260)
+                centerx=self.screen.get_width() / 2, centery=300)
             player2_txt = self.font.render("Second Player", True, self.WHITE)
             player2_pos = player2_txt.get_rect(
-                centerx=self.screen.get_width() / 2, centery=300)
+                centerx=self.screen.get_width() / 2, centery=340)
             level_txt = self.font.render("Computer Level", True, self.WHITE)
             level_pos = level_txt.get_rect(
-                centerx=self.screen.get_width() / 2, centery=340)
+                centerx=self.screen.get_width() / 2, centery=380)
+            mode_txt = self.font.render("Mode", True, self.WHITE)
+            mode_pos = mode_txt.get_rect(
+                centerx=self.screen.get_width() / 2, centery=260)
             human_txt = self.font.render("Human", True, self.WHITE)
             comp_txt = self.font.render("Computer", True, self.WHITE)
 
@@ -89,6 +94,7 @@ class Gui:
             self.screen.blit(player1_txt, player1_pos)
             self.screen.blit(player2_txt, player2_pos)
             self.screen.blit(level_txt, level_pos)
+            self.screen.blit(mode_txt, mode_pos)
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -96,19 +102,20 @@ class Gui:
                 elif event.type == MOUSEBUTTONDOWN:
                     (mouse_x, mouse_y) = pygame.mouse.get_pos()
                     if start_pos.collidepoint(mouse_x, mouse_y):
-                        return (player1, player2, level)
+                        return (player1, player2, level, mode)
                     elif player1_pos.collidepoint(mouse_x, mouse_y):
                         player1 = self.get_chosen_player()
                     elif player2_pos.collidepoint(mouse_x, mouse_y):
                         player2 = self.get_chosen_player()
                     elif level_pos.collidepoint(mouse_x, mouse_y):
                         level = self.get_chosen_level()
+                    elif mode_pos.collidepoint(mouse_x, mouse_y):
+                        mode = self.get_chosen_mode()
 
             pygame.display.flip()
             # desafoga a cpu
 
     def show_winner(self, player_color):
-        self.screen.fill(pygame.Color(0, 0, 0, 50))
         font = pygame.font.SysFont("Courier New", 34)
         if player_color == WHITE:
             msg = font.render("White player wins", True, self.WHITE)
@@ -118,7 +125,7 @@ class Gui:
             msg = font.render("Tie !", True, self.WHITE)
         self.screen.blit(
             msg, msg.get_rect(
-                centerx=self.screen.get_width() / 2, centery=120))
+                centerx=self.screen.get_width() / 2, centery=380))
         pygame.display.flip()
 
     def get_chosen_player(self):
@@ -132,7 +139,7 @@ class Gui:
                 centerx=self.screen.get_width() / 2, centery=60)
             human_txt = self.font.render("Human", True, self.WHITE)
             human_pos = human_txt.get_rect(
-                centerx=self.screen.get_width() / 2, centery=120)
+                centerx=self.screen.get_width() / 2, centery=200)
             comp_txt = self.font.render("Computer", True, self.WHITE)
             comp_pos = comp_txt.get_rect(
                 centerx=self.screen.get_width() / 2, centery=360)
@@ -200,8 +207,38 @@ class Gui:
             pygame.display.flip()
             # desafoga a cpu
             time.sleep(.05)
+    def get_chosen_mode(self):
+        """ Asks for a player
+        """
+        while True:
+            self.screen.fill(self.BACKGROUND)
+            title_fnt = pygame.font.SysFont("Times New Roman", 34)
+            title = title_fnt.render("Othello", True, self.WHITE)
+            title_pos = title.get_rect(
+                centerx=self.screen.get_width() / 2, centery=60)
+            normal_txt = self.font.render("Normal", True, self.WHITE)
+            normal_pos = normal_txt.get_rect(
+                centerx=self.screen.get_width() / 2, centery=200)
+            random_txt = self.font.render("Random", True, self.WHITE)
+            random_pos = random_txt.get_rect(
+                centerx=self.screen.get_width() / 2, centery=360)
 
-    def show_game(self):
+            self.screen.blit(title, title_pos)
+            self.screen.blit(normal_txt, normal_pos)
+            self.screen.blit(random_txt, random_pos)
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    sys.exit(0)
+                elif event.type == MOUSEBUTTONDOWN:
+                    (mouse_x, mouse_y) = pygame.mouse.get_pos()
+                    if normal_pos.collidepoint(mouse_x, mouse_y):
+                        return 'normal'
+                    elif random_pos.collidepoint(mouse_x, mouse_y):
+                        return 'random'
+
+            pygame.display.flip()
+    def show_game(self,random_index):
         """ Game screen. """
 
         # draws initial screen
@@ -213,6 +250,13 @@ class Gui:
         self.screen.blit(self.background, (0, 0), self.background.get_rect())
         self.screen.blit(self.board_img, self.BOARD_POS,
                          self.board_img.get_rect())
+        for index in random_index:
+            img = self.tip_img
+            x = index // 8 * self.SQUARE_SIZE + self.BOARD[0]
+            y = index % 8 * self.SQUARE_SIZE + self.BOARD[1]
+            self.random.append((index//8,index%8))
+            self.screen.blit(img, (x, y), img.get_rect())
+
         self.put_stone((3, 3), WHITE)
         self.put_stone((4, 4), WHITE)
         self.put_stone((3, 4), BLACK)
@@ -233,7 +277,7 @@ class Gui:
         elif color == WHITE:
             img = self.white_img
         else:
-            img = self.tip_img
+            return
 
         x = pos[0] * self.SQUARE_SIZE + self.BOARD[0]
         y = pos[1] * self.SQUARE_SIZE + self.BOARD[1]
@@ -251,6 +295,8 @@ class Gui:
         x = pos[0] * self.SQUARE_SIZE + self.BOARD[0]
         y = pos[1] * self.SQUARE_SIZE + self.BOARD[1]
         self.screen.blit(self.clear_img, (x, y), self.clear_img.get_rect())
+        if pos in self.random:
+             self.screen.blit(self.tip_img, (x, y), self.tip_img.get_rect())
         pygame.display.flip()
 
     def get_mouse_input(self):
