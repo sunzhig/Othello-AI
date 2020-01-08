@@ -42,7 +42,7 @@ class Othello:
         if player2 == "human":
             self.other_player = player.Human(self.gui, WHITE)
         else:
-            self.other_player = player.Computer(WHITE, level,2,True)
+            self.other_player = player.Computer(WHITE, level,3,True)
         if mode == 'random':
             l = list(range(64))
             l.remove(35)

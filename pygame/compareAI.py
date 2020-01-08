@@ -27,7 +27,7 @@ class Othello:
     def __init__(self):
         """ Show options screen and start game modules"""
         # start
-        self.reply = 100
+        self.reply = 10
         self.gui = ui.Gui()
 
 
@@ -75,14 +75,16 @@ class Othello:
 
     def restart(self):
         self.board = board.Board()
-        self.now_playing = player.Computer(BLACK, 3,3,False)
-        self.other_player = player.Computer(WHITE, 3,3,True)
+        self.now_playing = player.Computer(BLACK, 4,2,False)
+        self.other_player = player.Computer(WHITE, 4,3,False)
+        #self.other_player.policy_net.load("best-2000-new.weights")
+        #self.now_playing.policy_net.load("best-2000-minimax.weights")
         l = list(range(64))
         l.remove(35)
         l.remove(36)
         l.remove(27)
         l.remove(28)
-        random_index = [12,24,38,48]
+        random_index = []
         for i in random_index:
             self.board.board[i%8][i//8] = -1
         self.gui.show_game(random_index)

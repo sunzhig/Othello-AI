@@ -52,3 +52,75 @@ class Minimax(object):
 
         return (self.heuristic_eval(board, board, depth, player,
                                     opponent), bestChild)
+    
+    def alpha_beta(game, depth, alpha, beta):
+        best_action = -1, -1
+        if game.is_game_ended():
+            value = np.sum(game.board)
+            if game.color == WHITE:
+                value = -value
+            value += MARGIN if value > 0 else -MARGIN
+            return best_action, value
+
+        if depth == 0 or is_timeout():
+            value = np.sum(game.board * WEIGHTS)
+            if game.color == WHITE:
+                value = -value
+            return best_action, value
+
+        board = game.board
+        color = game.color
+
+        has_legal_move = False
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] != 0 or not game.place(i, j, color, check_only=True):
+                    continue
+                has_legal_move = True
+                new_game = game.copy()
+                new_game.apply_moveXY(i, j)
+                value = -alpha_beta(new_game, depth - 1, -beta, -alpha)[1]
+                if value > alpha:
+                    alpha = value
+                    best_action = i, j
+                    if beta <= alpha:
+                        return best_action, value
+
+        if not has_legal_move:
+            new_game = game.copy()
+            new_game.apply_moveXY(-1, -1)
+            return best_action, -alpha_beta(new_game, depth, -beta, -alpha)[1]
+
+        return best_action, alpha
+    def a_b(self,board,depth, maximizing, player, opponent,alpha=-INFINITY, beta=INFINITY):
+        choices = board.get_valid_moves(player)
+        if depth==0 or len(choices)==0:
+            return ([self.heuristic_eval(board, board, depth,player, opponent),board])
+        if maximizing:
+            v = -float("inf")
+            bestBoard = board
+            for move in choices:
+                child = deepcopy(board)
+                child.apply_move(move,player)
+                boardValue = self.a_b(child,depth-1,False,opponent,player,alpha,beta)[0]
+                if boardValue>v:
+                    v = boardValue
+                    bestBoard = child
+                alpha = max(alpha,v)
+                if beta <= alpha:
+                    break
+            return([v,bestBoard])
+        else:
+            v = float("inf")
+            bestBoard = board
+            for move in choices:
+                child = deepcopy(board)
+                child.apply_move(move,player)
+                boardValue = self.a_b(child,depth-1,True,opponent,player,alpha,beta)[0]
+                if boardValue<v:
+                    v = boardValue
+                    bestBoard = child
+                beta = min(beta,v)
+                if beta<=alpha:
+                    break
+            return([v,bestBoard])
