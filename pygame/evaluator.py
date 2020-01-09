@@ -287,28 +287,38 @@ class Evaluator2(object):
 
 class Evaluator3(object):
     priority_table = [
-            [120, -20,  20,   5,   5,  20, -20, 120],
-            [-20, -40,  -5,  -5,  -5,  -5, -40, -20],
-            [ 20,  -5,  15,   3,   3,  15,  -5,  20],
-            [  5,  -5,   3,   3,   3,   3,  -5,   5],
-            [  5,  -5,   3,   3,   3,   3,  -5,   5],
-            [ 20,  -5,  15,   3,   3,  15,  -5,  20],
-            [-20, -40,  -5,  -5,  -5,  -5, -40, -20],
-            [120, -20,  20,   5,   5,  20, -20, 120]
+    [20, -3, 11, 8, 8, 11, -3, 20],
+    [-3, -7, -4, 1, 1, -4, -7, -3],
+    [11, -4, 2, 2, 2, 2, -4, 11],
+    [8, 1, 2, -3, -3, 2, 1, 8],
+    [8, 1, 2, -3, -3, 2, 1, 8],
+    [11, -4, 2, 2, 2, 2, -4, 11],
+    [-3, -7, -4, 1, 1, -4, -7, -3],
+    [20, -3, 11, 8, 8, 11, -3, 20]
         ]
     def score(self, startBoard, board, currentDepth, player, opponent):
         valid_moves = board.get_valid_moves(player)
-        numMoves = 0
+        whites,blacks,empty = board.count_stones()
+        numMoves = whites+blacks
         score = 0
-        for x in range(8):
-            for y in range(8):
-                if (x,y)  in valid_moves:
-                    numMoves += 1
-        score+=numMoves
+        if numMoves <= 8:
+            num = 0
+            for x in range(8):
+                for y in range(8):
+                    if (x,y)  in valid_moves:
+                        num += 1
+            score+=num
+        if numMoves > 58:
+            if player == BLACK:
+                score = blacks - whites
+            elif player == WHITE:
+                score = whites - blacks
+            return score
         for x in range(8):
             for y in range(8):
                 if board.board[x][y] == player:
                     score+=Evaluator3.priority_table[x][y]
                 elif board.board[x][y] == opponent:
                     score-=Evaluator3.priority_table[x][y]
+
         return score

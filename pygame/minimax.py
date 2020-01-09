@@ -92,7 +92,7 @@ class Minimax(object):
             return best_action, -alpha_beta(new_game, depth, -beta, -alpha)[1]
 
         return best_action, alpha
-    def a_b(self,board,depth, maximizing, player, opponent,alpha=-INFINITY, beta=INFINITY):
+    def a_b(self,board, pastboard,depth, maximizing, player, opponent,alpha=-INFINITY, beta=INFINITY):
         choices = board.get_valid_moves(player)
         if depth==0 or len(choices)==0:
             return ([self.heuristic_eval(board, board, depth,player, opponent),board])
@@ -102,7 +102,7 @@ class Minimax(object):
             for move in choices:
                 child = deepcopy(board)
                 child.apply_move(move,player)
-                boardValue = self.a_b(child,depth-1,False,opponent,player,alpha,beta)[0]
+                boardValue = self.a_b(child,board,depth-1,False,opponent,player,alpha,beta)[0]
                 if boardValue>v:
                     v = boardValue
                     bestBoard = child
@@ -116,7 +116,7 @@ class Minimax(object):
             for move in choices:
                 child = deepcopy(board)
                 child.apply_move(move,player)
-                boardValue = self.a_b(child,depth-1,True,opponent,player,alpha,beta)[0]
+                boardValue = self.a_b(child,board,depth-1,True,opponent,player,alpha,beta)[0]
                 if boardValue<v:
                     v = boardValue
                     bestBoard = child

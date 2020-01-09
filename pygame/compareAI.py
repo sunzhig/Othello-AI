@@ -75,10 +75,10 @@ class Othello:
 
     def restart(self):
         self.board = board.Board()
-        self.now_playing = player.Computer(BLACK, 4,2,False)
+        self.now_playing = player.Computer(BLACK, 4,1,False)
         self.other_player = player.Computer(WHITE, 4,3,False)
-        #self.other_player.policy_net.load("best-2000-new.weights")
-        #self.now_playing.policy_net.load("best-2000-minimax.weights")
+        #self.other_player.policy_net.load("best-3W-pzh.weights")
+        #self.now_playing.policy_net.load("best-3W-minimax.weights")
         l = list(range(64))
         l.remove(35)
         l.remove(36)

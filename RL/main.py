@@ -12,17 +12,17 @@ from players import RLPlayer,Computer
                  #qlr,gamma,netlr (0.03)
 player = RLPlayer(0.07, 0.99, 0.03)
 rp = Computer()
-
+player.policy_net.load("best-3W-pzh.weights")
 match_size = 10
-n_epochs = 10000
+n_epochs = 30000
 
 player_wins = []
 for e in range(n_epochs):
-    print("Epoch: %d"%e)
+    print("Epoch: %d"%(e+30000))
 
     player.wins = 0
     # Anneal the exploration rate
-    player.epsilon = (np.exp(-0.017*e)+0.11)/1.1
+    player.epsilon = (np.exp(-0.017*(e+30000))+0.11)/1.1
     player_gameplay_history = []
 
     for _ in range(match_size):
